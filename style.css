@@ -1,0 +1,138 @@
+@media screen {
+  body {
+    margin: 0;
+    color: #fff;
+    background-color: #002B36;
+  }
+  body > #mainHeader {
+    background-color: #002C39;
+    font-size: xx-large;
+    text-align: center;
+  }
+  body > #octaveWindow {
+    width: 125px;
+    text-align: center;
+    float: left;
+  }
+  body > #octaveWindow > #octaveHeader {
+    background-color: #1A343C;
+    font-size: large;
+  }
+  body > #octaveWindow > .drawOctaveButton {
+    width: inherit;
+    border: 0;
+    outline: none;
+    color: inherit;
+    background-color: #00212B;
+    font-size: x-small;
+    text-align: left;
+    display: block;
+  }
+  body > #octaveWindow > .drawOctaveButton:hover {
+    background-color: #003440;
+  }
+  body > #octaveWindow > .drawOctaveButton:active {
+    background-color: #005A6F;
+  }
+  body > #octaveWindow > #active {
+    background-color: #005A6F;
+  }
+  body > #guiHeader {
+    width: calc(100% - 125px);
+    background-color: #002B37;
+    font-size: x-large;
+    text-align: center;
+    float: right;
+  }
+  body > #waveForms {
+    width: 75px;
+    background-color: #002B37;
+    font-size: x-small;
+    float: left;
+  }
+  body > #waveForms > .waveType {
+    width: 75px;
+    height: 240px;
+    margin: 0;
+    background-color: #004052;
+    display: inline-block;
+    position: relative;
+    top: 20px;
+  }
+  body > #guiWindow {
+    width: calc(100% - 200px);
+    height: 1220px;
+    background-color: #002B36;
+    display: inline-block;
+    overflow: scroll;
+  }
+  body > #guiWindow > #timelineNumbers {
+    font-size: medium;
+  }
+  body > #guiWindow > .wave {
+    height: 240px;
+    box-shadow: inset 0 0 5px black;
+  }
+  body > #guiWindow > .wave > .halfStepRow {
+    height: 20px;
+    display: inline-block;
+  }
+  body > #guiWindow > .wave > .halfStepRow > button.guiButton {
+    width: 20px;
+    height: 20px;
+    border: 1px rgba(255, 255, 255, 0.25);
+    border-style: outset;
+    outline: none;
+    background-color: #073642;
+    box-sizing: border-box;
+    display: inline-block;
+  }
+  body > #guiWindow > .wave > .halfStepRow > button.guiButton:hover {
+    box-shadow: inset 0 0 0 10px black;
+  }
+  body > #svgButtonWrapper {
+    height: 75px;
+    background-color: #00212B;
+    clear: both;
+  }
+  body > #svgButtonWrapper > #svgButtons {
+    font-size: 0;
+    text-align: center;
+  }
+  body > #svgButtonWrapper > #svgButtons > .svgButton {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+  }
+  body > #svgButtonWrapper > #svgButtons > .svgButton > path {
+    stroke-width: 2px;
+    stroke: green;
+    fill: limegreen;
+  }
+  body > #svgButtonWrapper > #svgButtons > .svgButton:hover {
+    outline: 1px solid white;
+  }
+  body > #svgButtonWrapper > #svgButtons > .svgButton:active > path {
+    stroke: limegreen;
+    fill: lime;
+  }
+  body > #svgButtonWrapper > #svgLabels {
+    font-size: 0;
+    text-align: center;
+  }
+  body > #svgButtonWrapper > #svgLabels > .buttonText {
+    width: 50px;
+    height: 25px;
+    margin: 0;
+    font-size: medium;
+    display: inline-block;
+  }
+  body > #mainFooter {
+    padding: 4px;
+    background-color: #00212B;
+    font-size: xx-small;
+    text-align: right;
+  }
+}
+
+/*# sourceMappingURL=style.css.map */

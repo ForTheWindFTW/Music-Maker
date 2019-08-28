@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <style></style>
+  <title>Music Maker</title>
+</head>
+
+<body>
+  <header id="mainHeader">Stanley's Music Maker</header>
+  <nav id="octaveWindow">
+    <header id="octaveHeader">Octave</header>
+    <button class="drawOctaveButton">9&#160;4186&#8209;7902Hz</button>
+    <button class="drawOctaveButton">8&#160;2093&#8209;3951Hz</button>
+    <button class="drawOctaveButton">7&#160;1047&#8209;1976Hz</button>
+    <button class="drawOctaveButton">6&#160;523&#8209;988Hz</button>
+    <button class="drawOctaveButton">5&#160;262&#8209;494Hz</button>
+    <button class="drawOctaveButton">4&#160;131&#8209;247Hz</button>
+    <button class="drawOctaveButton">3&#160;65&#8209;123Hz</button>
+    <button class="drawOctaveButton">2&#160;33&#8209;62Hz</button>
+    <button class="drawOctaveButton">1&#160;16&#8209;31Hz</button>
+  </nav>
+  <header id="guiHeader">Timeline</header>
+  <aside id="waveForms">
+    <p class="waveType">Sine</p>
+    <p class="waveType">Square</p>
+    <p class="waveType">Triangle</p>
+    <p class="waveType">Sawtooth</p>
+    <p class="waveType">Other</p>
+  </aside>
+  <section id="guiWindow">
+    <nav id="timelineNumbers">123456789...</nav>
+  </section>
+  <section id="svgButtonWrapper">
+    <section id="svgButtons">
+      <svg id="playButton" class="svgButton" onclick="playComposition();" width="50px" height="50px">
+        SVG is not supported.
+        <path d="m10,10 l0,30 l30,-15 z">
+      </svg>
+      <svg id="loopButton" class="svgButton" onclick="togglePlayLoop();" width="50px" height="50px">
+        SVG is not supported.
+        <path
+          d="m25 40 q-15,0 -15,-15 q0,-15 15,-15 q15,0 15,15 l5,0 l-9,10 l-9,-10 l5,0 q0,-7 -7,-7 q-7,0 -7,7 q0,7 7,7 z">
+      </svg><svg id="saveButton" class="svgButton" width="50px" height="50px">
+        SVG is not supported.
+        <path d="m21,10 l8,0 l0,15 l11,0 l-15,15 l-15,-15 l11,0 z">
+      </svg>
+      <svg id="loadButton" class="svgButton" width="50px" height="50px">
+        SVG is not supported.
+        <path d="m21,40 l8,0 l0,-15 l11,0 l-15,-15 l-15,15 l11,0 z">
+      </svg></section>
+    <section id="svgLabels">
+      <p class="buttonText">Play</p>
+      <p class="buttonText">Loop</p>
+      <p class="buttonText">Save</p>
+      <p class="buttonText">Load</p>
+    </section>
+
+  </section>
+  <footer id="mainFooter">Copyright &#169; 2019 Ordinary Asian Organization, All Rights Reserved.</footer>
+  <script src="main.js"></script>
+  <noscript>JavaScript is not enabled.</noscript>
+</body>
+
+</html>

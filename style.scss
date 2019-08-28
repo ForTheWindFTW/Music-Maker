@@ -1,0 +1,179 @@
+$SOLARIZED_DARK_COLOR: #fff;
+$SOLARIZED_DARK_MAINHEAD_BG: #002C39;
+$SOLARIZED_DARK_NAVHEAD_BG: #1A343C;
+$SOLARIZED_DARK_NAV_BUTTON_INACTIVE_BG: #00212B;
+$SOLARIZED_DARK_NAV_BUTTON_HOVER_BG: #003440;
+$SOLARIZED_DARK_NAV_BUTTON_ACTIVE_BG: #005A6F;
+$SOLARIZED_DARK_TIMEHEAD_BG: #002B37;
+$SOLARIZED_DARK_TIMELABEL_BG: #004052;
+$SOLARIZED_DARK_MAINBODY_BG: #002B36;
+$SOLARIZED_DARK_GUI_BUTTON_INACTIVE_BG: #073642;
+$SOLARIZED_DARK_SVG_BG: #00212B;
+$SOLARIZED_DARK_MAINFOOT_BG: #00212B;
+
+$OCTAVE_WINDOW_WIDTH: 125px;
+$WAVEFORMS_WIDTH: 75px;
+
+@media screen {
+  body {
+    margin: 0;
+    color: $SOLARIZED_DARK_COLOR;
+    background-color: $SOLARIZED_DARK_MAINBODY_BG;
+
+    & > #mainHeader {
+      background-color: $SOLARIZED_DARK_MAINHEAD_BG;
+      font-size: xx-large;
+      text-align: center;
+    }
+
+    & > #octaveWindow {
+      width: $OCTAVE_WINDOW_WIDTH;
+      text-align: center;
+      float: left;
+
+      & > #octaveHeader {
+        background-color: $SOLARIZED_DARK_NAVHEAD_BG;
+        font-size: large;
+      }
+
+      & > .drawOctaveButton {
+        width: inherit;
+        border: 0;
+        outline: none;
+        color: inherit;
+        background-color: $SOLARIZED_DARK_NAV_BUTTON_INACTIVE_BG;
+        font-size: x-small;
+        text-align: left;
+        display: block;
+
+        &:hover {
+          background-color: $SOLARIZED_DARK_NAV_BUTTON_HOVER_BG;
+        }
+
+        &:active {
+          background-color: $SOLARIZED_DARK_NAV_BUTTON_ACTIVE_BG;
+        }
+      }
+
+      & > #active {
+        background-color: $SOLARIZED_DARK_NAV_BUTTON_ACTIVE_BG;
+      }
+    }
+
+    & > #guiHeader {
+      width: calc(100% - #{$OCTAVE_WINDOW_WIDTH});
+      background-color: $SOLARIZED_DARK_TIMEHEAD_BG;
+      font-size: x-large;
+      text-align: center;
+      float: right;
+    }
+
+    & > #waveForms {
+      width: $WAVEFORMS_WIDTH;
+      background-color: $SOLARIZED_DARK_TIMEHEAD_BG;
+      font-size: x-small;
+      float: left;
+
+      & > .waveType {
+        width: $WAVEFORMS_WIDTH;
+        height: 240px;
+        margin: 0;
+        background-color: $SOLARIZED_DARK_TIMELABEL_BG;
+        display: inline-block;
+        position: relative;
+        top: 20px;
+      }
+    }
+
+    & > #guiWindow {
+      width: calc(100% - #{$OCTAVE_WINDOW_WIDTH + $WAVEFORMS_WIDTH});
+      height: 240px * 5 + 20px;
+      background-color: $SOLARIZED_DARK_MAINBODY_BG;
+      display: inline-block;
+      overflow: scroll;
+
+      & > #timelineNumbers {
+        font-size: medium;
+      }
+
+      & > .wave {
+        // width: fit-content;
+        // width: 370px;
+        height: 240px;
+        box-shadow: inset 0 0 5px black;
+
+        & > .halfStepRow {
+          height: 20px;
+          display: inline-block;
+
+          & > button.guiButton {
+            width: 20px;
+            height: 20px;
+            border: 1px rgba(255, 255, 255, 0.25);
+            border-style: outset;
+            outline: none;
+            background-color: $SOLARIZED_DARK_GUI_BUTTON_INACTIVE_BG;
+            box-sizing: border-box;
+            display: inline-block;
+
+            &:hover {
+              box-shadow: inset 0 0 0 10px black;
+            }
+          }
+      }
+      }
+    }
+
+    & > #svgButtonWrapper {
+      height: 75px;
+      background-color: $SOLARIZED_DARK_SVG_BG;
+      clear: both;
+
+      & > #svgButtons {
+        font-size: 0;
+        text-align: center;
+
+        & > .svgButton {
+          width: 50px;
+          height: 50px;
+          display: inline-block;
+
+          & > path {
+            stroke-width: 2px;
+            stroke: green;
+            fill: limegreen;
+          }
+
+          &:hover {
+            outline: 1px solid white;
+          }
+
+          &:active > path {
+            stroke: limegreen;
+            fill: lime;
+          }
+        }
+      }
+
+      & > #svgLabels {
+        font-size: 0;
+        text-align: center;
+
+        & > .buttonText {
+          width: 50px;
+          height: 25px;
+          margin: 0;
+          font-size: medium;
+          display: inline-block;
+        }
+      }
+    }
+
+    & > #mainFooter {
+      padding: 4px;
+      background-color: $SOLARIZED_DARK_MAINFOOT_BG;
+      font-size: xx-small;
+      text-align: right;
+    }
+  }
+}
