@@ -39,12 +39,26 @@ function setNoteArray() {
   return arr;
 }
 
-function appendNoteArray() {
+function appendNoteArray(count = 1) {
+  var el = '';
+  var arrayPushAmount = []
+  for (let index = 0; index < count; index++) {
+    el += `<button class="guiButton" style="left: ${(composition.length + index) * 20}px;"</button>`;
+    arrayPushAmount.push(0);
+  }
+  composition.length += count;
+
   for (let octave = 1; octave <= composition.octaves; octave++) {
     for (let wave = 0; wave < document.getElementsByClassName('waveType').length; wave++) {
       for (let halfStep = 0; halfStep < 12; halfStep++) {
-        composition.notes[octave][wave][halfStep].push(0);
+        composition.notes[octave][wave][halfStep].push(...arrayPushAmount);
       }
+    }
+  }
+
+  for (let wave = 0; wave < document.getElementsByClassName('waveType').length; wave++) {
+    for (let halfStep = 0; halfStep < 12; halfStep++) {
+      document.getElementsByClassName('wave')[wave].children[halfStep].innerHTML += el;
     }
   }
 }
@@ -56,7 +70,7 @@ function setElements() {
     for (let halfStep = 0; halfStep < 12; halfStep++) {
       el += '<div class="halfStepRow">';
       for (let button = 0; button < composition.notes[1][0][0].length; button++) {
-        el += '<button class="guiButton"></button>';
+        el += `<button class="guiButton" style="left: ${button * 20}px;"></button>`;
       }
       el += '</div>';
     }
@@ -76,6 +90,7 @@ window.onload = function() {
   composition.notes = setNoteArray();
   setElements();
   addOctaveEventListeners();
+  drawOctave(document.getElementsByClassName('drawOctaveButton')[4], 5);
 }
 
 function drawOctave(element, octave) {

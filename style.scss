@@ -14,6 +14,34 @@ $SOLARIZED_DARK_MAINFOOT_BG: #00212B;
 $OCTAVE_WINDOW_WIDTH: 125px;
 $WAVEFORMS_WIDTH: 75px;
 
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-button {
+  background-color: lime;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $SOLARIZED_DARK_NAV_BUTTON_INACTIVE_BG;
+
+  &:hover {
+    background-color: $SOLARIZED_DARK_NAV_BUTTON_HOVER_BG;
+  }
+
+  &:active {
+    background-color: $SOLARIZED_DARK_NAV_BUTTON_ACTIVE_BG;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background-color: white;
+}
+
 @media screen {
   body {
     margin: 0;
@@ -89,7 +117,6 @@ $WAVEFORMS_WIDTH: 75px;
       width: calc(100% - #{$OCTAVE_WINDOW_WIDTH + $WAVEFORMS_WIDTH});
       height: 240px * 5 + 20px;
       background-color: $SOLARIZED_DARK_MAINBODY_BG;
-      display: inline-block;
       overflow: scroll;
 
       & > #timelineNumbers {
@@ -97,14 +124,11 @@ $WAVEFORMS_WIDTH: 75px;
       }
 
       & > .wave {
-        // width: fit-content;
-        // width: 370px;
         height: 240px;
-        box-shadow: inset 0 0 5px black;
 
         & > .halfStepRow {
           height: 20px;
-          display: inline-block;
+          position: relative;
 
           & > button.guiButton {
             width: 20px;
@@ -114,7 +138,7 @@ $WAVEFORMS_WIDTH: 75px;
             outline: none;
             background-color: $SOLARIZED_DARK_GUI_BUTTON_INACTIVE_BG;
             box-sizing: border-box;
-            display: inline-block;
+            position: absolute;
 
             &:hover {
               box-shadow: inset 0 0 0 10px black;
