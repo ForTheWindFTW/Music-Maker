@@ -15,9 +15,16 @@ const SOLARIZED_DARK = {
   MAINFOOT: '#00212B'
 }
 
+const COLOR_LEGEND = ['white', 'lime', 'red'];
+for (let index = 0; index < COLOR_LEGEND.length; index++) {
+  COLOR_LEGEND[index] = ' ' + COLOR_LEGEND[index];
+}
+
 var composition = {
   A4Frequency: 440,
+  currentOctave: null,
   length: 32,
+  loopStatus: true,
   notes: null,
   octaves: 9
 }
@@ -63,7 +70,7 @@ function appendNoteArray(count = 1) {
   }
 }
 
-function setElements() {
+function initializeElements() {
   var el = '';
   for (let wave = 0; wave < document.getElementsByClassName('waveType').length; wave++) {
     el += '<section class="wave">';
@@ -79,18 +86,92 @@ function setElements() {
   document.getElementById('guiWindow').innerHTML += el;
 }
 
-function addOctaveEventListeners() {
+function toggleGuiButtonState(element, wave, halfStep, time) {
+  /** Changes value in composiiton.notes */
+  const value = composition.notes[composition.currentOctave][wave][halfStep][time];
+  if (value < COLOR_LEGEND.length) {
+    element.className = 'guiButton' + COLOR_LEGEND[composition.notes[composition.currentOctave][wave][halfStep][time]];
+    composition.notes[composition.currentOctave][wave][halfStep][time]++;
+  } else if (value === COLOR_LEGEND.length) {
+    composition.notes[composition.currentOctave][wave][halfStep][time] = 0;
+    element.className = 'guiButton';
+  }
+}
+
+function guiButtonEventHandler(input, element) {
+  toggleGuiButtonState(element, element.wave, element.halfStep, element.time);
+
+  // console.log(input);
+  // console.log(element);
+  // console.warn('wave: ' + element.wave);
+  // console.warn('halfStep: ' + element.halfStep);
+  // console.warn('time: ' + element.time);
+  // console.log(composition.notes[composition.currentOctave][element.wave][element.halfStep][element.time]);
+}
+
+function playComposition() {
+  console.warn('playComposition is WIP, do not use this!');
+  return;
+}
+
+function togglePlayLoop() {
+  // console.warn('togglePlayLoop is WIP, do not use this!');
+  // return;
+  switch(composition.loopStatus) {
+    case false:
+      composition.loopStatus = true;
+      var button = document.getElementById('loopButton');
+      if (button.childElementCount > 1) {
+        button.lastChild.remove();
+      }
+      break;
+    case true:
+      composition.loopStatus = false;
+      document.getElementById('loopButton').innerHTML += '<path class="inactive" d="m5,10 q-4,-5 -2,-7 q2,-2 7,2 l15,15 l15,-15 q5,-4 7,-2 q2,2 -2,7 l-15,15 l15,15 q4,5 2,7 q-2,2 -7,-2 l-15,-15 l-15,15 q-5,4 -7,2 q-2,-2 2,-7 l15,-15 z">';
+      break;
+  }
+}
+
+function saveComposition() {
+  console.warn('saveComposition is WIP, do not use this!');
+  return;
+}
+
+function loadComposition() {
+  console.warn('loadComposition is WIP, do not use this!');
+  return;
+}
+
+function initializeEventListeners() {
+  /** Octave switching event listeners */
   var buttons = document.getElementsByClassName('drawOctaveButton');
   for (let index = 0; index < buttons.length; index++) {
     buttons[index].addEventListener('click', function() { drawOctave(this, buttons.length - index + 1); });
   }
+
+  /** Event listeners of buttons function */
+  var buttons = document.getElementsByClassName('guiButton');
+  for (let index = 0; index < buttons.length; index++) {
+    buttons[index].addEventListener('click', function(input) { guiButtonEventHandler(input, this); } );
+    buttons[index].wave = Math.floor(index / 12 / composition.length);
+    buttons[index].halfStep = Math.floor(index / composition.length) - buttons[index].wave * 12;
+    buttons[index].time = index % composition.length;
+  }
+
+  /** SVG event listeners */
+  document.getElementById('playButton').addEventListener('click', playComposition);
+  document.getElementById('loopButton').addEventListener('click', togglePlayLoop);
+  document.getElementById('saveButton').addEventListener('click', saveComposition);
+  document.getElementById('loadButton').addEventListener('click', loadComposition);
 }
 
 window.onload = function() {
   composition.notes = setNoteArray();
-  setElements();
-  addOctaveEventListeners();
+  initializeElements();
+  initializeEventListeners();
   drawOctave(document.getElementsByClassName('drawOctaveButton')[4], 5);
+  document.addEventListener('keydown', eventHandler);
+  togglePlayLoop();
 }
 
 function drawOctave(element, octave) {
@@ -99,7 +180,44 @@ function drawOctave(element, octave) {
     activeButton.removeAttribute('id');
   }
   element.setAttribute('id', 'active');
-  // TODO: ADD LOADING OF OCTAVE ARRAY
+  composition.currentOctave = parseInt(document.getElementById('active').innerHTML[0]);
+
+  /** Reloads buttons styles, where they are not the same as what it should change to from composition.currentOctave */
+  var buttons = document.getElementsByClassName('guiButton');
+  for (let index = 0; index < composition.length * 12 * document.getElementsByClassName('waveType').length; index++) {
+    var buttonClass = buttons[index].className;
+    var wave = Math.floor(index / 12 / composition.length);
+    var halfStep = Math.floor(index / composition.length) - buttons[index].wave * 12;
+    var time = index % composition.length;
+    var expectedClass = composition.notes[composition.currentOctave][wave][halfStep][time] > 0 ? 'guiButton' + COLOR_LEGEND[composition.notes[composition.currentOctave][wave][halfStep][time] - 1] : 'guiButton';
+    if (buttonClass !== expectedClass) {
+      buttons[index].classList = expectedClass;
+    }
+  }
+}
+
+function eventHandler(input) {
+  // console.log(input);
+  switch(input.key.toUpperCase()) {
+    case 'TAB':
+      var buttons = document.getElementsByClassName('drawOctaveButton');
+      if (input.shiftKey === false) {
+        var nextElementSibling = document.getElementById('active').nextElementSibling;
+        if (nextElementSibling) {
+          nextElementSibling.click();
+        } else {
+          buttons[0].click();
+        }
+      } else if (input.shiftKey === true) {
+        var previousElementSibling = document.getElementById('active').previousElementSibling;
+        if (previousElementSibling.tagName.toUpperCase() === 'BUTTON') {
+          previousElementSibling.click();
+        } else {
+          buttons[buttons.length - 1].click();
+        }
+      }
+      break;
+  }
 }
 
 // // FIX: Notes in multiple octaves not stopping playing.

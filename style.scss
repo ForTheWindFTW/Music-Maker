@@ -14,29 +14,31 @@ $SOLARIZED_DARK_MAINFOOT_BG: #00212B;
 $OCTAVE_WINDOW_WIDTH: 125px;
 $WAVEFORMS_WIDTH: 75px;
 
-::-webkit-scrollbar {
-  width: 20px;
-}
+// ::-webkit-scrollbar {
+//   width: 20px;
+// }
 
-::-webkit-scrollbar-button {
-  background-color: lime;
-}
+// ::-webkit-scrollbar-button {
+//   background-color: lime;
+// }
 
-::-webkit-scrollbar-corner {
-  background-color: white;
-}
+// ::-webkit-scrollbar-corner {
+//   background-color: white;
+// }
 
-::-webkit-scrollbar-thumb {
-  background-color: $SOLARIZED_DARK_NAV_BUTTON_INACTIVE_BG;
+// ::-webkit-scrollbar-thumb {
+//   background-color: $SOLARIZED_DARK_NAV_BUTTON_INACTIVE_BG;
 
-  &:hover {
-    background-color: $SOLARIZED_DARK_NAV_BUTTON_HOVER_BG;
-  }
+//   &:hover {
+//     background-color: $SOLARIZED_DARK_NAV_BUTTON_HOVER_BG;
+//   }
 
-  &:active {
-    background-color: $SOLARIZED_DARK_NAV_BUTTON_ACTIVE_BG;
-  }
-}
+//   &:active {
+//     background-color: $SOLARIZED_DARK_NAV_BUTTON_ACTIVE_BG;
+//   }
+// }
+
+// TODO: Make x-scrollbar extend guiWindow and stuff height if visible, to avoid y-scrollbar from appearing
 
 ::-webkit-scrollbar-track {
   background-color: white;
@@ -143,6 +145,18 @@ $WAVEFORMS_WIDTH: 75px;
             &:hover {
               box-shadow: inset 0 0 0 10px black;
             }
+
+            &.white {
+              background-color: white;
+            }
+
+            &.lime {
+              background-color: lime;
+            }
+
+            &.red {
+              background-color: red;
+            }
           }
       }
       }
@@ -166,6 +180,11 @@ $WAVEFORMS_WIDTH: 75px;
             stroke-width: 2px;
             stroke: green;
             fill: limegreen;
+
+            &.inactive {
+              stroke: darkred;
+              fill: red;
+            }
           }
 
           &:hover {
@@ -175,6 +194,11 @@ $WAVEFORMS_WIDTH: 75px;
           &:active > path {
             stroke: limegreen;
             fill: lime;
+
+            &.inactive {
+              stroke: darkred;
+              fill: red;
+            }
           }
         }
       }
