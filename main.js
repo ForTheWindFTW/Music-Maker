@@ -1,3 +1,5 @@
+// TODO: Debug problem with sound not being produced after a while (at high bpm; >= 150, AND: it sometimes comes back alive (at 150, at least))
+
 'use strict';
 
 const SOLARIZED_DARK = {
@@ -21,12 +23,56 @@ for (let index = 0; index < COLOR_LEGEND.length; index++) {
 }
 
 var composition = {
-  A4Frequency: 440,
+  A5Frequency: 440,
+  bpm: 300,
   currentOctave: null,
-  length: 32,
+  length: 1,
   loopStatus: true,
   notes: null,
-  octaves: 9
+  octaves: 9,
+  timer: null
+}
+
+class Note {
+  constructor(beatLength = 1, frequency = 440, wave = "sine") {
+      this.beatLength = beatLength;
+      this.frequency = frequency;
+      this.wave = wave;
+  }
+}
+const noteFrequencies = getNoteFrequencies(composition.A5Frequency);
+
+function getUserSettingsInput() {
+  // composition.bpm = prompt('Please enter the bpm of your composition!');
+  // composition.length = prompt('How many beats (bars is probably correct term and method) long will it be?')
+}
+
+function getNoteFrequencies(frequencyOfA4) {
+  /**
+   * Note name order is:
+   * Low Frequencies
+   * "C", "CD", "D", "DE", "E"
+   * "F", "FG", "G", "GA", "A", "AB", "B";
+   * High Frequencies
+   *
+   * Double letters, such as "CD" and "DE" represent
+   * Sharps and Flats, C# / Db, and D# / Eb respectively.
+   * Note: All credit goes to
+   * https://pages.mtu.edu/~suits/notefreqs.html
+   *
+   * This frequency graph is also modeled by
+   * f(h) = 440(2^(x/12))
+   */
+
+  const HALF_STEP_FREQUENCY_RATIO = Math.pow(2, 1/12);
+  var arr = new Object();
+  for (let octave = 0; octave < 9; octave++) {
+    arr[octave + 1] = new Array();
+    for (let halfStep = 0; halfStep < 12; halfStep++) {
+      arr[octave + 1][halfStep] = frequencyOfA4 * Math.pow(HALF_STEP_FREQUENCY_RATIO, -57 + octave * 12 - halfStep + 11)
+    }
+  }
+  return arr;
 }
 
 function setNoteArray() {
@@ -47,6 +93,12 @@ function setNoteArray() {
 }
 
 function appendNoteArray(count = 1) {
+  // TODO: Enable increasing length of composition time
+  console.warn('appendNoteArray has become WIP, do not use this!');
+  return;
+  if(typeof(count) === 'object') {
+    count = 1;
+  }
   var el = '';
   var arrayPushAmount = []
   for (let index = 0; index < count; index++) {
@@ -71,6 +123,16 @@ function appendNoteArray(count = 1) {
 }
 
 function initializeElements() {
+  var text = '';
+  var letters = ["B", "A#/Bb", "A", "G#/Ab", "G", "G#/Fb", "F", "E", "D#/Eb", "D", "C#/Db", "C"];
+  for (let letter = 0; letter < letters.length; letter++) {
+    text += `<aside class="waveLabel">${letters[letter]}</aside>`;
+  }
+  var waves = document.getElementsByClassName('waveType');
+  for (let wave = 0; wave < waves.length; wave++) {
+    waves[wave].innerHTML += text;
+  }
+
   var el = '';
   for (let wave = 0; wave < document.getElementsByClassName('waveType').length; wave++) {
     el += '<section class="wave">';
@@ -84,6 +146,8 @@ function initializeElements() {
     el += '</section>';
   }
   document.getElementById('guiWindow').innerHTML += el;
+
+  // document.getElementById('guiWindow').style.height = document.getElementsByClassName('waveType').length * 240 + 20 + 'px';
 }
 
 function toggleGuiButtonState(element, wave, halfStep, time) {
@@ -109,9 +173,105 @@ function guiButtonEventHandler(input, element) {
   // console.log(composition.notes[composition.currentOctave][element.wave][element.halfStep][element.time]);
 }
 
+function playNote(note, time) {
+  // if (typeof(audioCtx) === 'undefined') {
+  //   window.audioCtx = new AudioContext();
+  // }
+  var audioCtx = new AudioContext();
+  // if (note.beatLength > 0) {
+        var duration = (60000 / composition.bpm) * note.beatLength; // Milliseconds
+        var attack = duration / 8; // 12.5% of duration, in milliseconds
+        var decay = duration / 8; // 12.5% of duration, in milliseconds
+
+        var gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + attack / 1000);
+    setTimeout(
+      () => {
+        gain.gain.setValueAtTime(1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + decay / 1000);
+      }, duration - decay
+    );
+        gain.connect(audioCtx.destination);
+
+        var osc = audioCtx.createOscillator();
+        osc.frequency.value = note.frequency;
+        osc.type = note.wave;
+        osc.connect(gain);
+        osc.start(0);
+
+        setTimeout(() => {
+                gain.disconnect(audioCtx.destination);
+                osc.stop(0);
+                osc.disconnect(gain);
+            }, duration
+        );
+    // }
+}
+
 function playComposition() {
-  console.warn('playComposition is WIP, do not use this!');
-  return;
+  // TODO: Enable playing of music
+  // console.warn('playComposition is WIP, do not use this!');
+  // return;
+  /** Toggles play button */
+  document.getElementsByClassName('buttonText')[0].innerHTML = 'Stop';
+  document.getElementsByTagName('path')[0].setAttribute('d', 'm10,10 l10,0 l0,30 l-10,0 z m20,0 l10,0 l0,30 l-10,0 z');
+  document.getElementById('playButton').removeEventListener('click', playComposition);
+  document.getElementById('playButton').addEventListener('click', stopComposition);
+
+  var noteArr = [];
+  for (let time = 0; time < composition.length; time++) {
+    noteArr[time] = [];
+    for (let octave = 1; octave <= composition.octaves; octave++) {
+      for (let wave = 0; wave < document.getElementsByClassName('waveType').length; wave++) {
+        for (let halfStep = 0; halfStep < 12; halfStep++) {
+          if (composition.notes[octave][wave][halfStep][time]) {
+            noteArr[time].push(new Note(1, noteFrequencies[octave][halfStep], document.getElementsByClassName('waveType')[wave].childNodes[0].nodeValue.toLowerCase()))
+          }
+        }
+      }
+    }
+  }
+
+  var currentTime = 0;
+  composition.timer = setInterval(
+    () => {
+      if(noteArr[currentTime].length) {
+        noteArr[currentTime].forEach(
+            (note) => {
+                playNote(note, currentTime);
+            }
+        );
+      }
+      currentTime++;
+      if (noteArr.length === currentTime) {
+        if (composition.loopStatus === false) {
+          clearInterval(composition.timer);
+          console.log('Finished Composition Play!');
+          stopComposition(false);
+          return;
+        } else if (composition.loopStatus === true) {
+          currentTime = 0;
+          console.log('Replaying Composition!')
+        }
+      }
+      console.log('Current Time: ' + currentTime);
+    }, 60000 / composition.bpm
+  );
+  return noteArr;
+}
+
+function stopComposition(calledByUser = true) {
+  /** Toggles pause button */
+  document.getElementsByClassName('buttonText')[0].innerHTML = 'Play';
+  document.getElementsByTagName('path')[0].setAttribute('d', 'm10,10 l0,30 l30,-15 z');
+  document.getElementById('playButton').removeEventListener('click', stopComposition);
+  document.getElementById('playButton').addEventListener('click', playComposition);
+  clearInterval(composition.timer);
+  composition.timer = null;
+  if (calledByUser) {
+    console.log('Composition Stopped Playing!');
+  }
 }
 
 function togglePlayLoop() {
@@ -133,11 +293,13 @@ function togglePlayLoop() {
 }
 
 function saveComposition() {
+  // TODO: Enable saving of music
   console.warn('saveComposition is WIP, do not use this!');
   return;
 }
 
 function loadComposition() {
+  // TODO: Enable loading of music
   console.warn('loadComposition is WIP, do not use this!');
   return;
 }
@@ -163,9 +325,11 @@ function initializeEventListeners() {
   document.getElementById('loopButton').addEventListener('click', togglePlayLoop);
   document.getElementById('saveButton').addEventListener('click', saveComposition);
   document.getElementById('loadButton').addEventListener('click', loadComposition);
+  document.getElementById('timeButton').addEventListener('click', appendNoteArray);
 }
 
 window.onload = function() {
+  getUserSettingsInput();
   composition.notes = setNoteArray();
   initializeElements();
   initializeEventListeners();
@@ -216,9 +380,112 @@ function eventHandler(input) {
           buttons[buttons.length - 1].click();
         }
       }
-      break;
   }
 }
+
+/*
+// class Note {
+//     constructor(beatStart, beatLength = 1, frequency = 440, wave = "sine") {
+//         this.beatStart = beatStart;
+//         this.beatLength = beatLength;
+//         this.frequency = frequency;
+//         this.wave = wave;
+//     }
+// }
+// const bpm = 60;
+var audioCtx = new AudioContext();
+note1 = new Note(0);
+note2 = new Note(1);
+note3 = new Note(3);
+note4 = new Note(0);
+
+playNotes(60, [note1, note2, note3, note4]);
+
+function playNotes(bpm, notes) {
+  var noteArr = [];
+  notes.forEach((note) => {
+      if (noteArr[note.beatStart] === undefined) {
+        noteArr[note.beatStart] = [];
+            }
+      noteArr[note.beatStart].push(note);
+            console.log(noteArr);
+      }
+  );
+
+  var currentTime = 0;
+
+  var timer = setInterval(() => {
+      if(noteArr[currentTime]) {
+                noteArr[currentTime].forEach(
+                    (note) => {
+                        playNote(note);
+                    }
+                );
+            }
+            currentTime++;
+            if (noteArr.length === currentTime) {
+                clearInterval(timer);
+            }
+      console.log(currentTime);
+    }, 1000
+  );
+}
+
+function playNote(note) {
+  if (note.beatLength > 0) {
+        var duration = (60000 / bpm) * note.beatLength; // Milliseconds
+        var attack = duration / 8; // 12.5% of duration, in milliseconds
+        var decay = duration / 8; // 12.5% of duration, in milliseconds
+
+        var gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + attack / 1000);
+    setTimeout(
+      () => {
+        gain.gain.setValueAtTime(1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + decay / 1000);
+      }, duration - decay
+    );
+        gain.connect(audioCtx.destination);
+
+        var osc = audioCtx.createOscillator();
+        osc.frequency.value = note.frequency;
+        osc.type = note.wave;
+        osc.connect(gain);
+        osc.start(0);
+
+        setTimeout(() => {
+                gain.disconnect(audioCtx.destination);
+                osc.stop(0);
+                osc.disconnect(gain);
+            }, duration
+        );
+    }
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // // FIX: Notes in multiple octaves not stopping playing.
 // const COMPOSITIONDURATION = 32;
@@ -411,7 +678,7 @@ function eventHandler(input) {
 // }
 
 // function setFrequencies() {
-// // TODO: Finsh here!
+// // TODO: (Finish here!)
 //   if (!frequencies) {
 //     return new Object();
 //   } else if (frequencies) {
@@ -429,7 +696,7 @@ function eventHandler(input) {
 // }
 
 // function playFrequencies() {
-// // TODO: Finish here!
+// // TODO: (Finish here!)
 //   var audioContext = new AudioContext();
 //   var oscillatorArr = new Array();
 //   for (const key in frequencies) {
@@ -457,7 +724,7 @@ function eventHandler(input) {
 // }
 
 // function playComposition() {
-// // TODO: Finish here!
+// // TODO: (Finish here!)
 //   if (compositionTimer === null) {
 //     compositionTimer = setInterval(() => {
 //       setFrequencies();
@@ -474,13 +741,13 @@ function eventHandler(input) {
 //   document.getElementsByClassName('buttonText')[0].innerHTML = 'Stop';
 //   document.getElementsByTagName('path')[0].setAttribute('d', 'm10,10 l10,0 l0,30 l-10,0 z m20,0 l10,0 l0,30 l-10,0 z');
 //   document.getElementById('playButton').setAttribute('onclick', 'stopComposition();');
-//   } else {
+//   } else
 //     console.warn('compositionTimer already active; playComposition() warning!')
 //   }
 // }
 
 // function stopComposition() {
-// // TODO: Finish here!
+// // TODO: (Finish here!)
 //   /** Toggles pause button */
 //   document.getElementsByClassName('buttonText')[0].innerHTML = 'Play';
 //   document.getElementsByTagName('path')[0].setAttribute('d', 'm10,10 l0,30 l30,-15 z');
@@ -511,22 +778,4 @@ function eventHandler(input) {
 //   styleDocument();
 //   switchOctave(5);
 //   togglePlayLoop();
-// }
-
-// function getNoteFrequencies(frequencyOfA4) {
-//   /** Note name order is:
-//    * "C", "CD", "D", "DE", "E"
-//    * "F", "FG", "G", "GA", "A", "AB", "B";
-//    * Double letters, such as "CD" and "DE" represent
-//    * Sharps and Flats, C# / Db, and D# / Eb respectively.
-//    * Note: All credits go to
-//    * https://pages.mtu.edu/~suits/notefreqs.html */
-//   var arr = new Object();
-//   for (let octave = 0; octave < 9; octave++) {
-//     arr[octave + 1] = new Array();
-//     for (let halfStep = 0; halfStep < 12; halfStep++) {
-//       arr[octave + 1][halfStep] = frequencyOfA4 * Math.pow(Math.pow(2, 1/12), -57 + halfStep + octave * 12)
-//     }
-//   }
-//   return arr;
 // }

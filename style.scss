@@ -13,6 +13,8 @@ $SOLARIZED_DARK_MAINFOOT_BG: #00212B;
 
 $OCTAVE_WINDOW_WIDTH: 125px;
 $WAVEFORMS_WIDTH: 75px;
+$GRID_HEIGHT: 20px;
+$LABEL_OFFSET: 4px;
 
 // ::-webkit-scrollbar {
 //   width: 20px;
@@ -112,14 +114,72 @@ $WAVEFORMS_WIDTH: 75px;
         display: inline-block;
         position: relative;
         top: 20px;
+
+        & > .waveLabel {
+          width: $WAVEFORMS_WIDTH - 3px;
+          font-size: 8px;
+          text-align: right;
+          letter-spacing: 0.5px;
+          position: absolute;
+
+          &:nth-child(1) {
+            top: $LABEL_OFFSET;
+          }
+
+          &:nth-child(2) {
+            top: $GRID_HEIGHT + $LABEL_OFFSET;
+          }
+
+          &:nth-child(3) {
+            top: $GRID_HEIGHT * 2 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(4) {
+            top: $GRID_HEIGHT * 3 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(5) {
+            top: $GRID_HEIGHT * 4 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(6) {
+            top: $GRID_HEIGHT * 5 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(7) {
+            top: $GRID_HEIGHT * 6 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(8) {
+            top: $GRID_HEIGHT * 7 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(9) {
+            top: $GRID_HEIGHT * 8 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(10) {
+            top: $GRID_HEIGHT * 9 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(11) {
+            top: $GRID_HEIGHT * 10 + $LABEL_OFFSET;
+          }
+
+          &:nth-child(12) {
+            top: $GRID_HEIGHT * 11 + $LABEL_OFFSET;
+          }
+        }
+
       }
     }
 
     & > #guiWindow {
       width: calc(100% - #{$OCTAVE_WINDOW_WIDTH + $WAVEFORMS_WIDTH});
-      height: 240px * 5 + 20px;
+      // TODO: MAKE THIS WORK DYNAMICALLY BASED ON NUM OF WAVE TYPES?
+      // height: 240px * 5 + 20px;
       background-color: $SOLARIZED_DARK_MAINBODY_BG;
-      overflow: scroll;
+      overflow-x: auto;
 
       & > #timelineNumbers {
         font-size: medium;
